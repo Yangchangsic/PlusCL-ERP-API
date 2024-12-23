@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Spring Boot</title>
+
+<script>
+	function navigate() {
+		// Get values from input and select
+		const beginDate = document.getElementById('begin_date').value;
+		const category1 = document.getElementById('category1').value;
+
+		// Construct URL
+		const url = `http://localhost:8080/api/excel?category1=${encodeURIComponent(category1)}&begin_date=${encodeURIComponent(beginDate)}`;
+
+		// Navigate to the URL
+		window.location.href = url;
+	}
+</script>
+</head>
+<body>
+	<!-- Select dropdown -->
+	<select id="category1" name="category1">
+		<option value="큐어라벨">큐어라벨</option>
+		<option value="에스더포뮬러">에스더포뮬러</option>
+	</select>
+	<br>
+	<br>
+	<input type="text" id="begin_date" name="begin_date">
+
+	<br>
+	<br>
+
+
+	<!-- Button to trigger navigation -->
+	<a href="#" onclick="navigate(); return false;">Go</a>
+
+</body>
+</html>
