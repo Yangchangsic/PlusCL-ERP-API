@@ -74,11 +74,11 @@ public class TutorialController {
 		STATIC_DATA2.put("SK스토어", "03549");
 		STATIC_DATA2.put("GS shop", "02926");
 		STATIC_DATA2.put("Wconcept", "02698");
-		STATIC_DATA2.put("신세계몰(신)", "02603");
+		STATIC_DATA2.put("신세계몰(신)", "02252");
 		STATIC_DATA2.put("롯데온", "02554");
 		STATIC_DATA2.put("카카오톡스토어", "02490");
 		STATIC_DATA2.put("스마트스토어", "02363");
-		STATIC_DATA2.put("신세계몰(신)", "02285");
+		STATIC_DATA2.put("신세계TV쇼핑", "02603");
 		STATIC_DATA2.put("K쇼핑", "01552");
 		STATIC_DATA2.put("홈&쇼핑", "00649");
 		STATIC_DATA2.put("NS홈쇼핑(신)", "00343");
@@ -87,6 +87,7 @@ public class TutorialController {
 		STATIC_DATA2.put("CJ온스타일", "00250");
 		STATIC_DATA2.put("쿠팡", "03985");
 		STATIC_DATA2.put("AliExpress", "1000001491");
+		STATIC_DATA2.put("써드웨이컴퍼니", "03612");
 	}
 
 	static {

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Spring Boot</title>
+<title>B2C Data 수동 </title>
 
 <script>
 	function navigate() {
@@ -21,19 +21,22 @@
 <body>
 	<!-- Select dropdown -->
 	<select id="category1" name="category1">
+	    <option value="에스더포뮬러">에스더포뮬러</option>
 		<option value="큐어라벨">큐어라벨</option>
-		<option value="에스더포뮬러">에스더포뮬러</option>
 	</select>
 	<br>
+	--------------------------------------
 	<br>
-	<input type="text" id="begin_date" name="begin_date">
+	<input type="text" id="begin_date" name="begin_date" required 
+         pattern="\d{4}\d{2}\d{2}" placeholder="YYYYMMDD"
+         title="날짜 형식은 YYYYMMDD이어야 합니다.">
 
-	<br>
-	<br>
+	<br><br>
 
 
 	<!-- Button to trigger navigation -->
-	<a href="#" onclick="navigate(); return false;">Go</a>
+	<a href="#" onclick="navigate(); return false;">다운로드</a>
 
 </body>
+
 </html>
