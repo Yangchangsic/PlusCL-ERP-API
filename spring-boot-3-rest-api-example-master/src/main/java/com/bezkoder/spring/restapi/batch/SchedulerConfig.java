@@ -1,19 +1,37 @@
 package com.bezkoder.spring.restapi.batch;
 
 
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
-/*@Configuration
-@EnableScheduling*/
-public class SchedulerConfig {/*
-								 * 
-								 * private final JobLauncher jobLauncher; private final Job job;
-								 * 
-								 * public SchedulerConfig(JobLauncher jobLauncher, Job job) { this.jobLauncher =
-								 * jobLauncher; this.job = job; }
-								 * 
-								 * @Scheduled(cron = "0 * * * * *") // 매일 오전 10시에 실행 public void runJob() { try
-								 * { jobLauncher.run(job, new org.springframework.batch.core.JobParameters());
-								 * System.out.println("Job executed successfully"); } catch (Exception e) {
-								 * System.err.println("Job execution failed: " + e.getMessage()); } }
-								 */
+import java.util.Date;
+
+@Configuration
+@EnableScheduling
+public class SchedulerConfig {
+
+    private final JobLauncher jobLauncher;
+    private final Job job;
+
+    @Autowired
+    public SchedulerConfig(JobLauncher jobLauncher, Job helloWorldJob) {
+        this.jobLauncher = jobLauncher;
+        this.job = helloWorldJob;
+    }
+
+    @Scheduled(cron = "*/3 * * * * *") // 매 3초마다 실행
+    public void runJob() throws Exception {
+        // 매 실행마다 유니크한 JobParameters 생성
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addDate("currentTime", new Date()) // 현재 시간을 파라미터로 추가
+                .toJobParameters();
+
+        jobLauncher.run(job, jobParameters);
+    }
 }
