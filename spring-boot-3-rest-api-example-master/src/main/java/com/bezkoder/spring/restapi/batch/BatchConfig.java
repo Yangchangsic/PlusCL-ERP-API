@@ -1,5 +1,6 @@
 package com.bezkoder.spring.restapi.batch;
 
+import com.bezkoder.spring.restapi.service.ApiService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -15,26 +16,25 @@ public class BatchConfig {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+    private final ExcelWriterTasklet excelWriterTasklet;
 
-    public BatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+    public BatchConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory, ExcelWriterTasklet excelWriterTasklet) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
+        this.excelWriterTasklet = excelWriterTasklet;
     }
 
     @Bean
-    public Step helloWorldStep() {
-        return stepBuilderFactory.get("helloWorldStep")
-                .tasklet((contribution, chunkContext) -> {
-                    System.out.println("Hello World");
-                    return RepeatStatus.FINISHED;
-                })
+    public Step excelWriterStep() {
+        return stepBuilderFactory.get("excelWriterStep")
+                .tasklet(excelWriterTasklet)
                 .build();
     }
 
     @Bean
-    public Job helloWorldJob(Step helloWorldStep) {
-        return jobBuilderFactory.get("helloWorldJob")
-                .start(helloWorldStep)
+    public Job excelWriterJob(Step excelWriterStep) {
+        return jobBuilderFactory.get("excelWriterJob")
+                .start(excelWriterStep)
                 .build();
     }
 }

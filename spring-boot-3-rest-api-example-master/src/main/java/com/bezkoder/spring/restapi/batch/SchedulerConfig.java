@@ -25,7 +25,7 @@ public class SchedulerConfig {
         this.job = helloWorldJob;
     }
 
-    @Scheduled(cron = "*/3 * * * * *") // 매 3초마다 실행
+    @Scheduled(cron = "0 * * * * *")
     public void runJob() throws Exception {
         // 매 실행마다 유니크한 JobParameters 생성
         JobParameters jobParameters = new JobParametersBuilder()
