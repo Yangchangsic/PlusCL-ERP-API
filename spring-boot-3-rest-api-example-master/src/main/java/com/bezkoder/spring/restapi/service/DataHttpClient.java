@@ -1,9 +1,11 @@
 package com.bezkoder.spring.restapi.service;
 
+import io.netty.channel.ChannelOption;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
 import java.util.Map;
@@ -29,17 +31,19 @@ public class DataHttpClient {
 
 	public WebClient createWebClient() {	
         // HttpClient에 타임아웃 설정
-        reactor.netty.http.client.HttpClient httpClient = reactor.netty.http.client.HttpClient.create()
-            .responseTimeout(Duration.ofSeconds(60)); // 응답 타임아웃 설정
+		HttpClient httpClient = HttpClient.create()
+				.responseTimeout(Duration.ofSeconds(3600)) // 응답 타임아웃 설정
+				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10_000); // 연결 타임아웃 설정
 
-        return WebClient.builder()
-                .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .baseUrl("https://service.pluscl.com") // 기본 URL 설정 (선택)
-                .defaultHeader("Content-Type", "application/json") // 기본 헤더 설정 (선택)
-                .exchangeStrategies(ExchangeStrategies.builder()
-                        .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(50 * 1024 * 1024)) // 50MB
-                        .build())
-                .build();
+		// WebClient 생성
+		return WebClient.builder()
+				.clientConnector(new ReactorClientHttpConnector(httpClient))
+				.baseUrl("https://service.pluscl.com") // 기본 URL 설정 (선택)
+				.defaultHeader("Content-Type", "application/json") // 기본 헤더 설정 (선택)
+				.exchangeStrategies(ExchangeStrategies.builder()
+						.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(50 * 1024 * 1024)) // 메모리 제한 설정: 50MB
+						.build())
+				.build();
     }
 
 }

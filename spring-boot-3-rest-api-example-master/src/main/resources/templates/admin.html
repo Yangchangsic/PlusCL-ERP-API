@@ -27,9 +27,11 @@
 	<br>
 	--------------------------------------
 	<br>
-	<input type="text" id="begin_date" name="begin_date" required 
-         pattern="\d{4}\d{2}\d{2}" placeholder="YYYYMMDD"
-         title="날짜 형식은 YYYYMMDD이어야 합니다.">
+	<input type="text" id="begin_date" name="begin_date" required
+		   pattern="\d{8}" placeholder="YYYYMMDD"
+		   title="날짜 형식은 YYYYMMDD이어야 합니다."
+		   inputmode="numeric"
+		   maxlength="8" />
 
 	<br><br>
 

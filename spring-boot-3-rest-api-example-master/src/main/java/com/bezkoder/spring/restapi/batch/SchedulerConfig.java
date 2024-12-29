@@ -26,10 +26,11 @@ public class SchedulerConfig {
         this.job = job;
     }
 
-    @Scheduled(cron = "0/6 * * * * *")
+    //@Scheduled(cron = "0 0 10 * * *") 10시
+    @Scheduled(cron = "0 45 * * * *")//매 시각 45분마다
     public void runJob() throws Exception {
         // 매 실행마다 유니크한 JobParameters 생성
-        String formattedDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String formattedDate = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 
         // 매 실행마다 유니크한 JobParameters 생성
         JobParameters jobParameters = new JobParametersBuilder()
