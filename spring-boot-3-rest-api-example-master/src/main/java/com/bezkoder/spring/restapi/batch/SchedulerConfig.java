@@ -18,17 +18,22 @@ import java.util.Date;
 public class SchedulerConfig {
 
     private final JobLauncher jobLauncher;
-    private final Job job;
+    private final Job excelWriterJob;
+    private final Job testJob;
 
     @Autowired
-    public SchedulerConfig(JobLauncher jobLauncher, Job job) {
+    public SchedulerConfig(JobLauncher jobLauncher,
+                           Job excelWriterJob,
+                           Job testJob
+    ) {
         this.jobLauncher = jobLauncher;
-        this.job = job;
+        this.excelWriterJob = excelWriterJob;
+        this.testJob = testJob;
     }
 
     //@Scheduled(cron = "0 0 10 * * *") 10시
     @Scheduled(cron = "0 45 * * * *")//매 시각 45분마다
-    public void runJob() throws Exception {
+    public void runExcelJob() throws Exception {
         // 매 실행마다 유니크한 JobParameters 생성
         String formattedDate = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 
@@ -37,7 +42,22 @@ public class SchedulerConfig {
                 .addString("currentTime", formattedDate) // yyyyMMdd 형식의 날짜 추가
                 .toJobParameters();
 
-        System.out.println("runJob");
-        jobLauncher.run(job, jobParameters);
+        System.out.println("runExcelJob");
+        jobLauncher.run(excelWriterJob, jobParameters);
+    }
+
+    //@Scheduled(cron = "0 0 10 * * *") 10시
+    @Scheduled(cron = "0/2 * * * * *")//2초마다
+    public void runTestJob() throws Exception {
+        // 매 실행마다 유니크한 JobParameters 생성
+        String formattedDate = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+
+        // 매 실행마다 유니크한 JobParameters 생성
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("currentTime", formattedDate) // yyyyMMdd 형식의 날짜 추가
+                .toJobParameters();
+
+        System.out.println("runTestJob");
+        jobLauncher.run(testJob, jobParameters);
     }
 }
