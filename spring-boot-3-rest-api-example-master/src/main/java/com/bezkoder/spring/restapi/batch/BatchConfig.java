@@ -26,6 +26,9 @@ public class BatchConfig {
 
     @Bean
     public Step excelWriterStep() {
+        System.out.println("excelWriterStep");
+
+
         return stepBuilderFactory.get("excelWriterStep")
                 .tasklet(excelWriterTasklet)
                 .build();
@@ -33,6 +36,7 @@ public class BatchConfig {
 
     @Bean
     public Job excelWriterJob(Step excelWriterStep) {
+        System.out.println("excelWriterJob");
         return jobBuilderFactory.get("excelWriterJob")
                 .start(excelWriterStep)
                 .build();

@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Configuration
@@ -20,18 +21,22 @@ public class SchedulerConfig {
     private final Job job;
 
     @Autowired
-    public SchedulerConfig(JobLauncher jobLauncher, Job helloWorldJob) {
+    public SchedulerConfig(JobLauncher jobLauncher, Job job) {
         this.jobLauncher = jobLauncher;
-        this.job = helloWorldJob;
+        this.job = job;
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0/6 * * * * *")
     public void runJob() throws Exception {
         // 매 실행마다 유니크한 JobParameters 생성
+        String formattedDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+
+        // 매 실행마다 유니크한 JobParameters 생성
         JobParameters jobParameters = new JobParametersBuilder()
-                .addDate("currentTime", new Date()) // 현재 시간을 파라미터로 추가
+                .addString("currentTime", formattedDate) // yyyyMMdd 형식의 날짜 추가
                 .toJobParameters();
 
+        System.out.println("runJob");
         jobLauncher.run(job, jobParameters);
     }
 }
