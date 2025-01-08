@@ -22,22 +22,29 @@ public class SchedulerConfig {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerConfig.class);
 
     private final JobLauncher jobLauncher;
-    private final Job excelWriterJob;
+    private final Job curLabelJob;
+    private final Job estherFomularJob;
+    private final Job setProductJob;
+
     private final Job testJob;
 
     @Autowired
     public SchedulerConfig(JobLauncher jobLauncher,
-                           Job excelWriterJob,
+                           Job curLabelJob,
+                           Job estherFomularJob,
+                           Job setProductJob,
                            Job testJob
     ) {
         this.jobLauncher = jobLauncher;
-        this.excelWriterJob = excelWriterJob;
+        this.curLabelJob = curLabelJob;
+        this.estherFomularJob = estherFomularJob;
+        this.setProductJob = setProductJob;
         this.testJob = testJob;
     }
 
-    //@Scheduled(cron = "0 0 10 * * *") 10시
+
     @Scheduled(cron = "0 0 10 * * *")//매 시각 45분마다
-    public void runExcelJob() throws Exception {
+    public void runCurLabel() throws Exception {
         // 매 실행마다 유니크한 JobParameters 생성
         String formattedDate = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 
@@ -48,7 +55,38 @@ public class SchedulerConfig {
 
         logger.debug("runExcelJob");
         logger.info("runExcelJob");
-        jobLauncher.run(excelWriterJob, jobParameters);
+        jobLauncher.run(curLabelJob, jobParameters);
+    }
+
+    @Scheduled(cron = "0 0 10 * * *")//매 시각 45분마다
+    public void runEstherFomular() throws Exception {
+        // 매 실행마다 유니크한 JobParameters 생성
+        String formattedDate = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+
+        // 매 실행마다 유니크한 JobParameters 생성
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("currentTime", formattedDate) // yyyyMMdd 형식의 날짜 추가
+                .toJobParameters();
+
+        logger.debug("runExcelJob");
+        logger.info("runExcelJob");
+        jobLauncher.run(estherFomularJob, jobParameters);
+    }
+
+
+    @Scheduled(cron = "0 0 10 * * *")//매 시각 45분마다
+    public void runSetProduct() throws Exception {
+        // 매 실행마다 유니크한 JobParameters 생성
+        String formattedDate = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+
+        // 매 실행마다 유니크한 JobParameters 생성
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("currentTime", formattedDate) // yyyyMMdd 형식의 날짜 추가
+                .toJobParameters();
+
+        logger.debug("runExcelJob");
+        logger.info("runExcelJob");
+        jobLauncher.run(setProductJob, jobParameters);
     }
 
     //@Scheduled(cron = "0/2 * * * * *")//2초마다

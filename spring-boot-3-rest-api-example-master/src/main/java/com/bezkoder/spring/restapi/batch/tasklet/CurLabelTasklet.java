@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class ExcelWriterTasklet implements Tasklet {
+public class CurLabelTasklet implements Tasklet {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExcelWriterTasklet.class);
+    private static final Logger logger = LoggerFactory.getLogger(CurLabelTasklet.class);
 
     @Autowired
     ApiService apiService;
@@ -63,30 +63,6 @@ public class ExcelWriterTasklet implements Tasklet {
             workbook.close();
         } catch (Exception e) {
             logger.error("category1 : " + category1 + ", begin_date : " + begin_date, e);
-        }
-
-        String category2 = "에스더포뮬러";
-        try {
-            logger.info(category2);
-            List<Map<String, Object>> excelDataList2 = apiService.getData(begin_date, category2);
-
-            excelDataList2.forEach(data -> logger.info("Excel Data: {}", data));
-            logger.info("{}", excelDataList2.size());
-
-            String path2 = "/Users/USER/Esther_" + begin_date + "_" + excelDataList2.size() + ".xlsx";
-            //여기서 윈도우 경로 바꿔야함.
-
-            // 파일이 이미 존재하면 기존 파일을 읽어서 수정, 없으면 새로 생성
-            Workbook workbook2 = apiService.getExcel(path2, excelDataList2, category2, begin_date);
-
-            // 파일 저장
-            try (FileOutputStream fos = new FileOutputStream(path2)) {
-                workbook2.write(fos);
-            }
-
-            workbook2.close();
-        } catch (Exception e) {
-            logger.error("category2 : " + category2 + ", begin_date : " + begin_date, e);
         }
         logger.info("=================================");
 

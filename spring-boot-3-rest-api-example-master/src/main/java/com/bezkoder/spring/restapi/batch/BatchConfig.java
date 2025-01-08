@@ -1,6 +1,8 @@
 package com.bezkoder.spring.restapi.batch;
 
-import com.bezkoder.spring.restapi.batch.tasklet.ExcelWriterTasklet;
+import com.bezkoder.spring.restapi.batch.tasklet.CurLabelTasklet;
+import com.bezkoder.spring.restapi.batch.tasklet.EstherFomularrTasklet;
+import com.bezkoder.spring.restapi.batch.tasklet.SetProductTasklet;
 import com.bezkoder.spring.restapi.batch.tasklet.TestTasklet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,33 +22,74 @@ public class BatchConfig {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-    private final ExcelWriterTasklet excelWriterTasklet;
+    private final CurLabelTasklet curLabelTasklet;
+    private final EstherFomularrTasklet estherFomularrTasklet;
+    private final SetProductTasklet setProductTasklet;
     private final TestTasklet testTasklet;
 
     public BatchConfig(JobBuilderFactory jobBuilderFactory,
                        StepBuilderFactory stepBuilderFactory,
-                       ExcelWriterTasklet excelWriterTasklet,
+                       CurLabelTasklet curLabelTasklet,
+                       EstherFomularrTasklet estherFomularrTasklet,
+                       SetProductTasklet setProductTasklet,
                        TestTasklet testTasklet
     ) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
-        this.excelWriterTasklet = excelWriterTasklet;
+        this.curLabelTasklet = curLabelTasklet;
+        this.estherFomularrTasklet = estherFomularrTasklet;
+        this.setProductTasklet = setProductTasklet;
         this.testTasklet = testTasklet;
     }
 
+    //curLabel
     @Bean
-    public Step excelWriterStep() {
-        logger.info("excelWriterStep");
-        return stepBuilderFactory.get("excelWriterStep")
-                .tasklet(excelWriterTasklet)
+    public Job curLabelJob(Step curLabelStep) {
+        logger.info("curLabelJob");
+        return jobBuilderFactory.get("curLabelJob")
+                .start(curLabelStep)
                 .build();
     }
 
     @Bean
-    public Job excelWriterJob(Step excelWriterStep) {
-        logger.info("excelWriterJob");
-        return jobBuilderFactory.get("excelWriterJob")
-                .start(excelWriterStep)
+    public Step curLabelStep() {
+        logger.info("curLabelStep");
+        return stepBuilderFactory.get("curLabelStep")
+                .tasklet(curLabelTasklet)
+                .build();
+    }
+
+    //estherFomular
+    @Bean
+    public Job estherFomularJob(Step estherFomularStep) {
+        logger.info("estherFomularJob");
+        return jobBuilderFactory.get("estherFomularJob")
+                .start(estherFomularStep)
+                .build();
+    }
+
+    @Bean
+    public Step estherFomularStep() {
+        logger.info("estherFomularStep");
+        return stepBuilderFactory.get("estherFomularStep")
+                .tasklet(estherFomularrTasklet)
+                .build();
+    }
+
+    //setProduct
+    @Bean
+    public Job setProductJob(Step setProductStep) {
+        logger.info("setProductJob");
+        return jobBuilderFactory.get("setProductJob")
+                .start(setProductStep)
+                .build();
+    }
+
+    @Bean
+    public Step setProductStep() {
+        logger.info("setProductStep");
+        return stepBuilderFactory.get("setProductStep")
+                .tasklet(setProductTasklet)
                 .build();
     }
 
