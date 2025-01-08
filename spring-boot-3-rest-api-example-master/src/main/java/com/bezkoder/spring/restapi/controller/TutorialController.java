@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,11 +37,12 @@ public class TutorialController {
 
     @GetMapping("/tutorials")
     @ResponseBody
-    public String getAllTutorials(@RequestParam(required = false) String title) {
+    public String getAllTutorials() {
 
-        String begin_date = "20241205";
-        String category1 = "큐어라벨";
-        List<Map<String, Object>> excelDataList = apiService.getData(begin_date, category1);
+        String begin_date = "20250107";
+        String category1 = "세트상품";
+        String category2 = "필름세트 3개입";
+        List<Map<String, Object>> excelDataList = apiService.getData(begin_date, category1, category2);
 
         excelDataList.forEach(data -> logger.info("Excel Data: {}", data));
         logger.info("{}", excelDataList.size());
@@ -47,10 +51,13 @@ public class TutorialController {
     }
 
     @GetMapping("/excel")
-    public ResponseEntity<byte[]> downloadExcel(@RequestParam(required = true) String category1,
-                                                @RequestParam(required = true) String begin_date) throws IOException {
-
-        List<Map<String, Object>> excelDataList = apiService.getData(begin_date, category1);
+    public ResponseEntity<byte[]> downloadExcel(String category1, String category2, String begin_date) throws IOException {
+        List<Map<String, Object>> excelDataList;
+        if (category2 != null && !category2.isEmpty()) {
+            excelDataList = apiService.getData(begin_date, category1, category2);
+        } else {
+            excelDataList = apiService.getData(begin_date, category1);
+        }
 
         byte[] excelData = apiService.getExcel(excelDataList, category1, begin_date);
 

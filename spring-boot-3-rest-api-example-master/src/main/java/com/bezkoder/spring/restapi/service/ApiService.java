@@ -12,10 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +27,7 @@ public class ApiService {
     private static final Map<String, String> STATIC_DATA = new HashMap<>();
     private static final Map<String, String> STATIC_DATA2 = new HashMap<>();
     private static final Map<String, String> STATIC_DATA3 = new HashMap<>();
+    private static final Map<String, Map<String, Object>> ITEM_CODE = new HashMap<>();
 
     // static 블록을 사용하여 초기 데이터 삽입
     static {
@@ -71,9 +69,152 @@ public class ApiService {
         STATIC_DATA3.put("카카오톡선물하기", "선물하기");
     }
 
+    static {
+        ITEM_CODE.put("CCM3", Map.of(
+                "singleCode", "PC_EF_1030",
+                "productName", "[필름세트]커큐민  3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("CCM12", Map.of(
+                "singleCode", "PC_EF_1030",
+                "productName", "[필름세트]커큐민  12개입",
+                "qty", 12
+        ));
+        ITEM_CODE.put("ECF3", Map.of(
+                "singleCode", "PC_EF_1052",
+                "productName", "[필름세트]엘라스틴&콜라겐  3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("GBF3", Map.of(
+                "singleCode", "PC_EF_1069",
+                "productName", "[필름세트]가바  3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("GFK12", Map.of(
+                "singleCode", "PC_EF_1072",
+                "productName", "[필름세트]글루타치온 키즈 12개입",
+                "qty", 12
+        ));
+        ITEM_CODE.put("GFK3", Map.of(
+                "singleCode", "PC_EF_1072",
+                "productName", "[필름세트]글루타치온 키즈 3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("GFM12", Map.of(
+                "singleCode", "PC_EF_1073",
+                "productName", "[필름세트]글루타치온 맨즈 12개입",
+                "qty", 12
+        ));
+        ITEM_CODE.put("GFM3", Map.of(
+                "singleCode", "PC_EF_1073",
+                "productName", "[필름세트]글루타치온 맨즈 3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("GFS3", Map.of(
+                "singleCode", "PC_EF_1076",
+                "productName", "[필름세트]글루타치온 실버 3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("GFS12", Map.of(
+                "singleCode", "PC_EF_1076",
+                "productName", "[필름세트]글루타치온 실버 12개입",
+                "qty", 12
+        ));
+        ITEM_CODE.put("GFX3", Map.of(
+                "singleCode", "PC_EF_1079",
+                "productName", "[필름세트]글루타치온 5X <3개입>",
+                "qty", 3
+        ));
+        ITEM_CODE.put("GFX12", Map.of(
+                "singleCode", "PC_EF_1079",
+                "productName", "[필름세트]글루타치온 5X <12개입>",
+                "qty", 12
+        ));
+        ITEM_CODE.put("GLT3", Map.of(
+                "singleCode", "PC_EF_1080",
+                "productName", "글루타치온다이렉트필름",
+                "qty", 3
+        ));
+        ITEM_CODE.put("GDT3", Map.of(
+                "singleCode", "PC_EF_1082",
+                "productName", "[필름세트]글루타치온 3X <3개입>",
+                "qty", 3
+        ));
+        ITEM_CODE.put("GDT12", Map.of(
+                "singleCode", "PC_EF_1082",
+                "productName", "[필름세트]글루타치온 3X 12개입",
+                "qty", 12
+        ));
+        ITEM_CODE.put("PGD3", Map.of(
+                "singleCode", "PC_EF_1149",
+                "productName", "[필름세트]프로테오글리칸 2X  <3개입>",
+                "qty", 3
+        ));
+        ITEM_CODE.put("PGD12", Map.of(
+                "singleCode", "PC_EF_1149",
+                "productName", "[필름세트]프로테오글리칸 2X  <12개입>",
+                "qty", 12
+        ));
+        ITEM_CODE.put("PDC3", Map.of(
+                "singleCode", "PC_EF_1153",
+                "productName", "[필름세트]프로테오글리칸 콘드 3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("PDC12", Map.of(
+                "singleCode", "PC_EF_1153",
+                "productName", "[필름세트]프로테오글리칸 콘드 12개입",
+                "qty", 12
+        ));
+        ITEM_CODE.put("SAC3", Map.of(
+                "singleCode", "PC_EF_1180",
+                "productName", "[필름세트]SAC  3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("SAC12", Map.of(
+                "singleCode", "PC_EF_1180",
+                "productName", "[필름세트]SAC 12개입",
+                "qty", 12
+        ));
+        ITEM_CODE.put("SDD3", Map.of(
+                "singleCode", "PC_EF_1182",
+                "productName", "[필름세트]연어DNA 3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("LGD3", Map.of(
+                "singleCode", "PC_EF_1207",
+                "productName", "[필름세트]리포좀글루타치온 3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("LGD12", Map.of(
+                "singleCode", "PC_EF_1207",
+                "productName", "[필름세트]리포좀글루타치온 12개입",
+                "qty", 12
+        ));
+        ITEM_CODE.put("RGD3", Map.of(
+                "singleCode", "PC_EF_1213",
+                "productName", "[필름세트]유기농 홍삼 3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("NMN3", Map.of(
+                "singleCode", "PC_EF_1245",
+                "productName", "여에스더 NMN 파이토에스 3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("NMX3", Map.of(
+                "singleCode", "PC_EF_1251",
+                "productName", "[필름세트]NMN 2X 3개입",
+                "qty", 3
+        ));
+        ITEM_CODE.put("PVS6", Map.of(
+                "singleCode", "PC_YN_3003",
+                "productName", "영라뉴 펌킨 브이샷",
+                "qty", 6
+        ));
+    }
+
     public List<Map<String, Object>> getData(String begin_date, String category1) {
         List<Map<String, Object>> excelDataList = new ArrayList<>();
-        int index = 1;
+        int page = 1;
 
         while (true) {
 
@@ -95,15 +236,18 @@ public class ApiService {
             data.put("ord_kind1", "0100");
             data.put("warehouse_list", "AFAX");
             data.put("category1", category1);
-            data.put("page", String.valueOf(index));
+            data.put("page", String.valueOf(page));
 
             // "data" Map을 최상위 Map에 추가
             body.put("data", data);
 
-            Map<String, Object> result = dataHttpClient.fetchData(body);
+            Map<String, Object> result = dataHttpClient.fetchOrderReport(body);
 
             String r_code = (String) result.get("r_code");
             if (!"0".equals(r_code)) {
+                //todo
+
+
                 return new ArrayList<>();
             }
 
@@ -172,7 +316,163 @@ public class ApiService {
                 return transformedMap;
             }).collect(Collectors.toList());
             excelDataList.addAll(test);
-            index++;
+            page++;
+        }
+        return excelDataList;
+    }
+
+    public List<Map<String, Object>> getData(String begin_date, String category1, String category2) {
+        List<Map<String, Object>> excelDataList = new ArrayList<>();
+        int page = 1;
+        try {
+            while (true) {
+                // 최상위 Map
+                Map<String, Object> body = new HashMap<>();
+
+                // 첫 번째 레벨 데이터 추가
+                body.put("company_code", "B201");
+                body.put("warehouse_code", "AFAX");
+                body.put("warehouse_type_code", "0000");
+                body.put("seller_code", "B201");
+                body.put("job_type", "search");
+                body.put("type", "out");
+
+                // "data" 키에 들어갈 중첩 Map 생성
+                Map<String, Object> data = new HashMap<>();
+                data.put("begin_date", begin_date);
+                data.put("end_date", begin_date);
+                data.put("ord_kind1", "0100");
+                data.put("warehouse_list", "AFAX");
+                data.put("category1", category1);
+                data.put("category2", category2);
+                data.put("page", String.valueOf(page));
+
+                // "data" Map을 최상위 Map에 추가
+                body.put("data", data);
+
+                Map<String, Object> result = dataHttpClient.fetchOrderReport(body);
+
+                String r_code = (String) result.get("r_code");
+                if (!"0".equals(r_code)) {
+                    //todo
+                    logger.error(category1 + " 실패입니다.");
+                    return new ArrayList<>();
+                }
+
+                List<Map<String, Object>> resultDataList = (List<Map<String, Object>>) result.get("data");
+
+                if (resultDataList.isEmpty()) {
+                    break;
+                }
+
+                List<Map<String, Object>> test = resultDataList.stream().filter(map -> {
+                            Object itemCode = map.get("item_code");
+                            return itemCode != null;
+                        }).map(map -> {
+                            Map<String, Object> transformedMap = new HashMap<>();
+                            transformedMap.put("row_id", map.get("row_id"));
+                            transformedMap.put("ord_name", map.get("ord_name"));
+
+                            String ordName = (String) map.get("ord_name");
+                            if (ordName == null) {
+                                transformedMap.put("ch_order_name", null);
+                            } else {
+                                if ("큐어라벨".equals(category1)) {
+                                    transformedMap.put("ch_order_name", STATIC_DATA.get(ordName));
+                                } else {
+                                    transformedMap.put("ch_order_name", STATIC_DATA2.get(ordName));
+                                }
+                            }
+
+                            String itemCode = (String) map.get("item_code");
+                            String sheifLiftUnit = (String) map.get("SheifLift_Unit");
+                            Integer sheifLift = (Integer) map.get("SheifLift");
+
+                            String lotNo = (String) map.get("lot_no");
+
+                            int qty = (int) map.get("qty");
+                            transformedMap.put("lot_no", map.get("lot_no"));
+                            if (lotNo == null || lotNo.isEmpty()) {
+                                Map<String, Object> body2 = new HashMap<>();
+                                // 첫 번째 레벨 데이터 추가
+                                body2.put("company_code", "B201");
+                                body2.put("warehouse_code", "AFAX");
+                                body2.put("warehouse_type_code", "0000");
+                                body2.put("seller_code", "B201");
+
+                                // "data" 키에 들어갈 중첩 Map 생성
+                                Map<String, Object> data2 = new HashMap<>();
+                                data2.put("item_code", List.of(ITEM_CODE.get(itemCode).get("singleCode")));
+                                data2.put("rack_code", List.of());
+                                body2.put("data", data2);
+
+                                Map<String, Object> result2 = dataHttpClient.fetchStockQty(body2);
+
+                                String r_code2 = (String) result2.get("r_code");
+                                if (!"0".equals(r_code2)) {
+                                    //todo
+                                    logger.error(category1 + ", " + category2 + " 실패입니다.");
+                                    throw new RuntimeException(category1 + ", " + category2 + " 실패입니다.");
+                                }
+
+                                List<Map<String, Object>> resultDataList2 = ((List<Map<String, Object>>) result2.get("data")).stream()
+                                        .filter(reusltData2 -> reusltData2.get("lot_no") != null && !"".equals(reusltData2.get("lot_no")))
+                                        .collect(Collectors.toList());
+
+                                if (resultDataList2.isEmpty()) {
+                                    logger.error(category1 + ", " + category2 + " 실패입니다.");
+                                    lotNo = "*";
+                                } else {
+                                    // 가장 작은 lot_no를 가진 Map 찾기
+                                    Map<String, Object> smallestLotNoResultData2 = resultDataList2.stream()
+                                            .filter(reusltData2 -> reusltData2.get("lot_no") != null && !"".equals(reusltData2.get("lot_no")))
+                                            .min(Comparator.comparing(reusltData2 -> reusltData2.get("lot_no").toString()))
+                                            .orElse(Collections.emptyMap());
+
+                                    lotNo = (String) smallestLotNoResultData2.get("lot_no");
+                                    sheifLiftUnit = (String) smallestLotNoResultData2.get("SheifLift_Unit");
+                                    sheifLift = (Integer) smallestLotNoResultData2.get("SheifLift");
+                                    qty = (Integer) ITEM_CODE.get(itemCode).get("qty") * qty;
+                                }
+                            } else {
+                                transformedMap.put("item_code", itemCode.substring(0, Math.min(11, itemCode.length())));
+                            }
+                            transformedMap.put("qty", qty);
+
+                            transformedMap.put("lot_no", lotNo);
+
+                            String expireDay = "*";
+                            if (!"*".equals(lotNo)) {
+                                // 날짜 형식 지정
+                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+                                // lot_no를 LocalDate로 변환
+                                LocalDate lotDate = LocalDate.parse(lotNo, formatter);
+
+                                // SheifLift_Unit이 "M"인 경우
+                                if ("M".equalsIgnoreCase(sheifLiftUnit)) {
+                                    lotDate = lotDate.plusMonths(sheifLift).minusDays(1);
+                                    expireDay = lotDate.format(formatter);
+                                } else if ("D".equals(sheifLiftUnit)) {
+                                    lotDate = lotDate.plusDays(sheifLift).minusDays(1);
+                                    expireDay = lotDate.format(formatter);
+                                } else if ("Y".equalsIgnoreCase(sheifLiftUnit)) { // ++ 연도 추가
+                                    lotDate = lotDate.plusYears(sheifLift).minusDays(1);
+                                    expireDay = lotDate.format(formatter);
+                                }
+                            }
+
+                            transformedMap.put("expireDay", expireDay);
+
+                            return transformedMap;
+                        })
+                        .filter(map -> !map.isEmpty()) // 빈 Map 제거
+                        .collect(Collectors.toList());
+                excelDataList.addAll(test);
+                page++;
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
         return excelDataList;
     }

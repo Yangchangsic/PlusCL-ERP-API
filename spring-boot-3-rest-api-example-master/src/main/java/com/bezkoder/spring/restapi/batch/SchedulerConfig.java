@@ -51,8 +51,7 @@ public class SchedulerConfig {
         jobLauncher.run(excelWriterJob, jobParameters);
     }
 
-    //@Scheduled(cron = "0 0 10 * * *") 10시
-    @Scheduled(cron = "0/2 * * * * *")//2초마다
+    //@Scheduled(cron = "0/2 * * * * *")//2초마다
     public void runTestJob() throws Exception {
         // 매 실행마다 유니크한 JobParameters 생성
         String formattedDate = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
