@@ -16,7 +16,6 @@ public class TestTasklet implements Tasklet {
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
         logger.info("test start");
-        System.out.println("test start");
         logger.info("test end");
         return RepeatStatus.FINISHED;
     }

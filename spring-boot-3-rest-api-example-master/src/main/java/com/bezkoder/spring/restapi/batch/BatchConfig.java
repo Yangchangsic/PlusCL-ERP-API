@@ -2,6 +2,8 @@ package com.bezkoder.spring.restapi.batch;
 
 import com.bezkoder.spring.restapi.batch.tasklet.ExcelWriterTasklet;
 import com.bezkoder.spring.restapi.batch.tasklet.TestTasklet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -13,6 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableBatchProcessing
 public class BatchConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(BatchConfig.class);
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -32,7 +36,7 @@ public class BatchConfig {
 
     @Bean
     public Step excelWriterStep() {
-        System.out.println("excelWriterStep");
+        logger.info("excelWriterStep");
         return stepBuilderFactory.get("excelWriterStep")
                 .tasklet(excelWriterTasklet)
                 .build();
@@ -40,7 +44,7 @@ public class BatchConfig {
 
     @Bean
     public Job excelWriterJob(Step excelWriterStep) {
-        System.out.println("excelWriterJob");
+        logger.info("excelWriterJob");
         return jobBuilderFactory.get("excelWriterJob")
                 .start(excelWriterStep)
                 .build();
@@ -48,7 +52,7 @@ public class BatchConfig {
 
     @Bean
     public Step testStep() {
-        System.out.println("testStep");
+        logger.info("testStep");
         return stepBuilderFactory.get("testStep")
                 .tasklet(testTasklet)
                 .build();
@@ -56,7 +60,7 @@ public class BatchConfig {
 
     @Bean
     public Job testJob(Step testStep) {
-        System.out.println("testJob");
+        logger.info("testJob");
         return jobBuilderFactory.get("testJob")
                 .start(testStep)
                 .build();

@@ -1,6 +1,8 @@
 package com.bezkoder.spring.restapi.controller;
 
 import com.bezkoder.spring.restapi.service.ApiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,6 +26,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class TutorialController {
+
+    private static final Logger logger = LoggerFactory.getLogger(TutorialController.class);
+
     @Autowired
     ApiService apiService;
 
@@ -34,9 +39,9 @@ public class TutorialController {
         String begin_date = "20241205";
         String category1 = "큐어라벨";
         List<Map<String, Object>> excelDataList = apiService.getData(begin_date, category1);
-        excelDataList.forEach(System.out::println);
 
-        System.out.println(excelDataList.size());
+        excelDataList.forEach(data -> logger.info("Excel Data: {}", data));
+        logger.info("{}", excelDataList.size());
 
         return "OK";
     }

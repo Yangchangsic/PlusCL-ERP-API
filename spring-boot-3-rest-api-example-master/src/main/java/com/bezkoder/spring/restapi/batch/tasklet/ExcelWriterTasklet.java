@@ -2,6 +2,8 @@ package com.bezkoder.spring.restapi.batch.tasklet;
 
 import com.bezkoder.spring.restapi.service.ApiService;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -17,12 +19,14 @@ import java.util.Map;
 @Component
 public class ExcelWriterTasklet implements Tasklet {
 
+    private static final Logger logger = LoggerFactory.getLogger(ExcelWriterTasklet.class);
+
     @Autowired
     ApiService apiService;
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws IOException {
-        System.out.println("excel start");
+        logger.info("excel start");
 
         String begin_date;
         try {
@@ -32,18 +36,18 @@ public class ExcelWriterTasklet implements Tasklet {
                     .toString()
                     .substring(0, 8);
             //begin_date = "20241226";      //날짜 20241226로 고정
-            System.out.println("begin_date : " + begin_date);
+            logger.info("begin_date : " + begin_date);
         } catch (Exception e) {
             return RepeatStatus.FINISHED;
         }
-        System.out.println(begin_date);
+        logger.info(begin_date);
 
+        String category1 = "큐어라벨";
         try {
-            String category1 = "큐어라벨";
-            System.out.println(category1);
+            logger.info(category1);
             List<Map<String, Object>> excelDataList = apiService.getData(begin_date, category1);
-            excelDataList.forEach(System.out::println);
-            System.out.println(excelDataList.size());
+            excelDataList.forEach(data -> logger.info("Excel Data: {}", data));
+            logger.info("{}", excelDataList.size());
 
             String path = "/Users/USER/Curelabel_" + begin_date + "_" + excelDataList.size() + ".xlsx";
             //여기서 윈도우 경로 바꿔야함.
@@ -58,15 +62,16 @@ public class ExcelWriterTasklet implements Tasklet {
 
             workbook.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("category1 : " + category1 + ", begin_date : " + begin_date, e);
         }
 
+        String category2 = "에스더포뮬러";
         try {
-            String category2 = "에스더포뮬러";
-            System.out.println(category2);
+            logger.info(category2);
             List<Map<String, Object>> excelDataList2 = apiService.getData(begin_date, category2);
-            excelDataList2.forEach(System.out::println);
-            System.out.println(excelDataList2.size());
+
+            excelDataList2.forEach(data -> logger.info("Excel Data: {}", data));
+            logger.info("{}", excelDataList2.size());
 
             String path2 = "/Users/USER/Esther_" + begin_date + "_" + excelDataList2.size() + ".xlsx";
             //여기서 윈도우 경로 바꿔야함.
@@ -81,9 +86,9 @@ public class ExcelWriterTasklet implements Tasklet {
 
             workbook2.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("category2 : " + category2 + ", begin_date : " + begin_date, e);
         }
-        System.out.println("=================================");
+        logger.info("=================================");
 
         return RepeatStatus.FINISHED;
     }

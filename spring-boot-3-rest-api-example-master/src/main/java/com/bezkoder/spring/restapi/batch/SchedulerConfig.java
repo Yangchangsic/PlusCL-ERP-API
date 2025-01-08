@@ -1,6 +1,8 @@
 package com.bezkoder.spring.restapi.batch;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -17,6 +19,8 @@ import java.util.Date;
 @EnableScheduling
 public class SchedulerConfig {
 
+    private static final Logger logger = LoggerFactory.getLogger(SchedulerConfig.class);
+
     private final JobLauncher jobLauncher;
     private final Job excelWriterJob;
     private final Job testJob;
@@ -32,7 +36,7 @@ public class SchedulerConfig {
     }
 
     //@Scheduled(cron = "0 0 10 * * *") 10시
-    @Scheduled(cron = "0 45 * * * *")//매 시각 45분마다
+    @Scheduled(cron = "0 0 10 * * *")//매 시각 45분마다
     public void runExcelJob() throws Exception {
         // 매 실행마다 유니크한 JobParameters 생성
         String formattedDate = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -42,7 +46,8 @@ public class SchedulerConfig {
                 .addString("currentTime", formattedDate) // yyyyMMdd 형식의 날짜 추가
                 .toJobParameters();
 
-        System.out.println("runExcelJob");
+        logger.debug("runExcelJob");
+        logger.info("runExcelJob");
         jobLauncher.run(excelWriterJob, jobParameters);
     }
 
@@ -57,7 +62,8 @@ public class SchedulerConfig {
                 .addString("currentTime", formattedDate) // yyyyMMdd 형식의 날짜 추가
                 .toJobParameters();
 
-        System.out.println("runTestJob");
+        logger.debug("runTestJob");
+        logger.info("runTestJob");
         jobLauncher.run(testJob, jobParameters);
     }
 }

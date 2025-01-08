@@ -2,6 +2,8 @@ package com.bezkoder.spring.restapi.service;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ApiService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
 
     @Autowired
     DataHttpClient dataHttpClient;
@@ -425,7 +429,7 @@ public class ApiService {
 //					.concat("-").concat(begin_date.substring(6, 8)));
 
             Map<String, Object> excelData = excelDataList.get(i);
-            System.out.println("excelData  :" + excelData);
+            logger.info("excelData  :" + excelData);
 
             try {
 //				row.createCell(2).setCellValue(Integer.valueOf((String) excelDataList.get(i).get("ch_order_name"))); + 추가 텍스트값으로 해야함 안그러면 00이 숫자로 인식해서 엑셀변환시 안나타남
