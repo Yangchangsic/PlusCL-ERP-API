@@ -3,6 +3,7 @@ package com.bezkoder.spring.restapi.service;
 import io.netty.channel.ChannelOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -29,6 +30,7 @@ public class DataHttpClient {
                 .bodyValue(body) // 요청 본문 설정
                 .retrieve() // 응답 처리 시작
                 .bodyToMono(Map.class)
+                .retry(3) // 3회 재시도
                 .block(); // 비동기를 동기로 변환 (필요 시)
         logger.info("fetchOrderReport body : " + body + ", result : " + result);
         return result;
@@ -41,6 +43,7 @@ public class DataHttpClient {
                 .bodyValue(body) // 요청 본문 설정
                 .retrieve() // 응답 처리 시작
                 .bodyToMono(Map.class)
+                .retry(3) // 3회 재시도
                 .block(); // 비동기를 동기로 변환 (필요 시)
         logger.info("fetchStockQty body : " + body + ", result : " + result);
         return result;
@@ -54,6 +57,7 @@ public class DataHttpClient {
 
         // WebClient 생성
         return WebClient.builder()
+                .defaultHeader(HttpHeaders.CONNECTION, "keep-alive")
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .baseUrl("https://service.pluscl.com") // 기본 URL 설정 (선택)
                 .defaultHeader("Content-Type", "application/json") // 기본 헤더 설정 (선택)

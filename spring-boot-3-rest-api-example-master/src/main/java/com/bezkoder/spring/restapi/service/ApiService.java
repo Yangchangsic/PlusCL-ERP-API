@@ -1,5 +1,6 @@
 package com.bezkoder.spring.restapi.service;
 
+import com.bezkoder.spring.restapi.model.ItemCode;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +29,9 @@ public class ApiService {
     private static final Map<String, String> STATIC_DATA = new HashMap<>();
     private static final Map<String, String> STATIC_DATA2 = new HashMap<>();
     private static final Map<String, String> STATIC_DATA3 = new HashMap<>();
+    private static final Map<String, String> STATIC_DATA4 = new HashMap<>();
     private static final Map<String, Map<String, Object>> ITEM_CODE = new HashMap<>();
+    private static final Map<String, List<ItemCode>> ITEM_CODE2 = new HashMap<>();
 
     // static 블록을 사용하여 초기 데이터 삽입
     static {
@@ -67,6 +71,18 @@ public class ApiService {
     static {
         STATIC_DATA3.put("카카오톡스토어", "스토어");
         STATIC_DATA3.put("카카오톡선물하기", "선물하기");
+    }
+
+    static {
+        STATIC_DATA4.put("홈앤쇼핑", "00649");
+        STATIC_DATA4.put("K쇼핑", "01552");
+        STATIC_DATA4.put("NS홈쇼핑", "00343");
+        STATIC_DATA4.put("CJ온스타일", "00250");
+        STATIC_DATA4.put("신세계티비쇼핑", "02603");
+        STATIC_DATA4.put("롯데", "00341");
+        STATIC_DATA4.put("sk스토어", "03549");
+        STATIC_DATA4.put("현대홈쇼핑", "00251");
+        STATIC_DATA4.put("GS홈쇼핑", "02926");
     }
 
     static {
@@ -212,9 +228,37 @@ public class ApiService {
         ));
     }
 
-    public List<Map<String, Object>> getData(String begin_date, String category1) {
+    static {
+        ITEM_CODE2.put("1207RE+1212", List.of(
+                        new ItemCode(
+                                "PC_EF_1207",
+                                "리포좀 글루타치온 다이렉트 울트라X 리뉴얼",
+                                12,
+                                "20270818"
+                        ), new ItemCode(
+                                "PC_EF_1212",
+                                "루테인지아잔틴 다이렉트 RS2",
+                                1,
+                                "20260313"
+                        )
+                )
+        );
+        ITEM_CODE2.put("1207SE 13", List.of(
+                        new ItemCode(
+                                "PC_EF_1207",
+                                "리포좀 글루타치온 다이렉트 울트라X 리뉴얼 2",
+                                13,
+                                "20271110"
+                        )
+                )
+        );
+    }
+
+
+    public List<Map<String, Object>> getDataForB2C(String begin_date, String category1) {
         List<Map<String, Object>> excelDataList = new ArrayList<>();
         int page = 1;
+        AtomicInteger count = new AtomicInteger();
 
         while (true) {
 
@@ -247,7 +291,6 @@ public class ApiService {
             if (!"0".equals(r_code)) {
                 //todo
 
-
                 return new ArrayList<>();
             }
 
@@ -266,10 +309,12 @@ public class ApiService {
                 transformedMap.put("ord_name", map.get("ord_name"));
 
                 String ordName = (String) map.get("ord_name");
-                if (ordName == null) {
-                    transformedMap.put("ch_order_name", null);
+                if (ordName == null || ordName.isEmpty() || "(주)에스더포뮬러".equals(ordName) || "에*사".equals(ordName)) {
+                    String ordSiteUserId = (String) map.get("ord_site_user_id");
+                    String chOrderName = STATIC_DATA4.get(ordSiteUserId);
+                    transformedMap.put("ch_order_name", chOrderName);
+                    count.getAndIncrement();
                 } else {
-
                     if ("큐어라벨".equals(category1)) {
                         transformedMap.put("ch_order_name", STATIC_DATA.get(ordName));
                     } else {
@@ -318,10 +363,11 @@ public class ApiService {
             excelDataList.addAll(test);
             page++;
         }
+        logger.debug("count : " + count.get());
         return excelDataList;
     }
 
-    public List<Map<String, Object>> getData(String begin_date, String category1, String category2) {
+    public List<Map<String, Object>> getDataForSetProduct(String begin_date, String category1, String category2) {
         List<Map<String, Object>> excelDataList = new ArrayList<>();
         int page = 1;
         try {
@@ -388,58 +434,18 @@ public class ApiService {
                             String sheifLiftUnit = (String) map.get("SheifLift_Unit");
                             Integer sheifLift = (Integer) map.get("SheifLift");
 
-                            String lotNo = (String) map.get("lot_no");
+                            String lotNo = Optional.ofNullable((String) map.get("lot_no")).orElse("");
+                            transformedMap.put("lot_no", lotNo);
 
                             int qty = (int) map.get("qty");
-                            transformedMap.put("lot_no", map.get("lot_no"));
-                            if (lotNo == null || lotNo.isEmpty()) {
-                                Map<String, Object> body2 = new HashMap<>();
-                                // 첫 번째 레벨 데이터 추가
-                                body2.put("company_code", "B201");
-                                body2.put("warehouse_code", "AFAX");
-                                body2.put("warehouse_type_code", "0000");
-                                body2.put("seller_code", "B201");
 
-                                // "data" 키에 들어갈 중첩 Map 생성
-                                Map<String, Object> data2 = new HashMap<>();
-                                data2.put("item_code", List.of(ITEM_CODE.get(itemCode).get("singleCode")));
-                                data2.put("rack_code", List.of());
-                                body2.put("data", data2);
-
-                                Map<String, Object> result2 = dataHttpClient.fetchStockQty(body2);
-
-                                String r_code2 = (String) result2.get("r_code");
-                                if (!"0".equals(r_code2)) {
-                                    //todo
-                                    logger.error(category1 + ", " + category2 + " 실패입니다.");
-                                    throw new RuntimeException(category1 + ", " + category2 + " 실패입니다.");
-                                }
-
-                                List<Map<String, Object>> resultDataList2 = ((List<Map<String, Object>>) result2.get("data")).stream()
-                                        .filter(reusltData2 -> reusltData2.get("lot_no") != null && !"".equals(reusltData2.get("lot_no")))
-                                        .collect(Collectors.toList());
-
-                                if (resultDataList2.isEmpty()) {
-                                    logger.error(category1 + ", " + category2 + " 실패입니다.");
-                                    lotNo = "*";
-                                } else {
-                                    // 가장 작은 lot_no를 가진 Map 찾기
-                                    Map<String, Object> smallestLotNoResultData2 = resultDataList2.stream()
-                                            .filter(reusltData2 -> reusltData2.get("lot_no") != null && !"".equals(reusltData2.get("lot_no")))
-                                            .min(Comparator.comparing(reusltData2 -> reusltData2.get("lot_no").toString()))
-                                            .orElse(Collections.emptyMap());
-
-                                    lotNo = (String) smallestLotNoResultData2.get("lot_no");
-                                    sheifLiftUnit = (String) smallestLotNoResultData2.get("SheifLift_Unit");
-                                    sheifLift = (Integer) smallestLotNoResultData2.get("SheifLift");
-                                    qty = (Integer) ITEM_CODE.get(itemCode).get("qty") * qty;
-                                }
+                            if (ITEM_CODE.get(itemCode) == null) {
+                                transformedMap.put("item_code", "");
+                                transformedMap.put("qty", -1);
                             } else {
-                                transformedMap.put("item_code", itemCode.substring(0, Math.min(11, itemCode.length())));
+                                transformedMap.put("item_code", ITEM_CODE.get(itemCode).get("singleCode"));
+                                transformedMap.put("qty", qty * (Integer) ITEM_CODE.get(itemCode).get("qty"));
                             }
-                            transformedMap.put("qty", qty);
-
-                            transformedMap.put("lot_no", lotNo);
 
                             String expireDay = "*";
                             if (!"*".equals(lotNo)) {
@@ -465,9 +471,86 @@ public class ApiService {
                             transformedMap.put("expireDay", expireDay);
 
                             return transformedMap;
+                        }) // 빈 Map 제거
+                        .toList();
+                excelDataList.addAll(test);
+                page++;
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return excelDataList;
+    }
+
+    public List<Map<String, Object>> getDataForSetHomeProduct(String begin_date, String category1, String category2) {
+        List<Map<String, Object>> excelDataList = new ArrayList<>();
+        int page = 1;
+        try {
+            while (true) {
+                // 최상위 Map
+                Map<String, Object> body = new HashMap<>();
+
+                // 첫 번째 레벨 데이터 추가
+                body.put("company_code", "B201");
+                body.put("warehouse_code", "AFAX");
+                body.put("warehouse_type_code", "0000");
+                body.put("seller_code", "B201");
+                body.put("job_type", "search");
+                body.put("type", "out");
+
+                // "data" 키에 들어갈 중첩 Map 생성
+                Map<String, Object> data = new HashMap<>();
+                data.put("begin_date", begin_date);
+                data.put("end_date", begin_date);
+                data.put("ord_kind1", "0100");
+                data.put("warehouse_list", "AFAX");
+                data.put("category1", category1);
+                data.put("category2", category2);
+                data.put("page", String.valueOf(page));
+
+                // "data" Map을 최상위 Map에 추가
+                body.put("data", data);
+
+                Map<String, Object> result = dataHttpClient.fetchOrderReport(body);
+
+                String r_code = (String) result.get("r_code");
+                if (!"0".equals(r_code)) {
+                    //todo
+                    logger.error(category1 + " 실패입니다.");
+                    return new ArrayList<>();
+                }
+
+                List<Map<String, Object>> resultDataList = (List<Map<String, Object>>) result.get("data");
+
+                if (resultDataList.isEmpty()) {
+                    break;
+                }
+
+                List<Map<String, Object>> test = resultDataList.stream().filter(map -> {
+                            Object itemCode = map.get("item_code");
+                            return itemCode != null;
+                        }).map(map -> {
+                            int qty = (int) map.get("qty");
+                            String itemCode = (String) map.get("item_code");    //1207RE+1212
+                            List<ItemCode> list = ITEM_CODE2.get(itemCode);
+                            return list.stream()
+                                    .map(itemCode2 -> {
+                                        Map<String, Object> transformedMap = new HashMap<>();
+                                        transformedMap.put("row_id", map.get("row_id"));
+                                        transformedMap.put("ord_name", map.get("ord_name"));
+                                        transformedMap.put("item_code", itemCode2.getSingleCode());
+                                        String ordSiteUserId = (String) map.get("ord_site_user_id");
+                                        String chOrderName = STATIC_DATA4.get(ordSiteUserId);
+                                        transformedMap.put("ch_order_name", chOrderName);
+                                        transformedMap.put("qty", qty * itemCode2.getQty());
+                                        transformedMap.put("expireDay", itemCode2.getExpireDay());
+                                        return transformedMap;
+                                    })
+                                    .collect(Collectors.toList());
                         })
+                        .flatMap(Collection::stream) // 리스트를 평탄화
                         .filter(map -> !map.isEmpty()) // 빈 Map 제거
-                        .collect(Collectors.toList());
+                        .toList();
                 excelDataList.addAll(test);
                 page++;
             }

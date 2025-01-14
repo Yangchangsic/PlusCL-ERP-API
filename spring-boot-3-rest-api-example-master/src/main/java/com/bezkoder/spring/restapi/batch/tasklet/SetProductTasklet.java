@@ -46,7 +46,7 @@ public class SetProductTasklet implements Tasklet {
         String category2 = "필름세트 3개입";
         try {
             logger.info(category1);
-            List<Map<String, Object>> excelDataList = apiService.getData(begin_date, category1, category2);
+            List<Map<String, Object>> excelDataList = apiService.getDataForSetProduct(begin_date, category1, category2);
             excelDataList.forEach(data -> logger.info("Excel Data: {}", data));
             logger.info("{}", excelDataList.size());
 

@@ -1,9 +1,6 @@
 package com.bezkoder.spring.restapi.batch;
 
-import com.bezkoder.spring.restapi.batch.tasklet.CurLabelTasklet;
-import com.bezkoder.spring.restapi.batch.tasklet.EstherFomularrTasklet;
-import com.bezkoder.spring.restapi.batch.tasklet.SetProductTasklet;
-import com.bezkoder.spring.restapi.batch.tasklet.TestTasklet;
+import com.bezkoder.spring.restapi.batch.tasklet.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -25,6 +22,7 @@ public class BatchConfig {
     private final CurLabelTasklet curLabelTasklet;
     private final EstherFomularrTasklet estherFomularrTasklet;
     private final SetProductTasklet setProductTasklet;
+    private final SetHomeProductTasklet setHomeProductTasklet;
     private final TestTasklet testTasklet;
 
     public BatchConfig(JobBuilderFactory jobBuilderFactory,
@@ -32,6 +30,7 @@ public class BatchConfig {
                        CurLabelTasklet curLabelTasklet,
                        EstherFomularrTasklet estherFomularrTasklet,
                        SetProductTasklet setProductTasklet,
+                       SetHomeProductTasklet setHomeProductTasklet,
                        TestTasklet testTasklet
     ) {
         this.jobBuilderFactory = jobBuilderFactory;
@@ -39,6 +38,7 @@ public class BatchConfig {
         this.curLabelTasklet = curLabelTasklet;
         this.estherFomularrTasklet = estherFomularrTasklet;
         this.setProductTasklet = setProductTasklet;
+        this.setHomeProductTasklet = setHomeProductTasklet;
         this.testTasklet = testTasklet;
     }
 
@@ -90,6 +90,23 @@ public class BatchConfig {
         logger.info("setProductStep");
         return stepBuilderFactory.get("setProductStep")
                 .tasklet(setProductTasklet)
+                .build();
+    }
+
+    //setProduct
+    @Bean
+    public Job setHomeProductJob(Step setHomeProductStep) {
+        logger.info("setHomeProductJob");
+        return jobBuilderFactory.get("setHomeProductJob")
+                .start(setHomeProductStep)
+                .build();
+    }
+
+    @Bean
+    public Step setHomeProductStep() {
+        logger.info("setHomeProductStep");
+        return stepBuilderFactory.get("setHomeProductStep")
+                .tasklet(setHomeProductTasklet)
                 .build();
     }
 

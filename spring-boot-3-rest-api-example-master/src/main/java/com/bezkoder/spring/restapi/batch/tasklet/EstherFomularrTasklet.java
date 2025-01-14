@@ -45,7 +45,7 @@ public class EstherFomularrTasklet implements Tasklet {
         String category2 = "에스더포뮬러";
         try {
             logger.info(category2);
-            List<Map<String, Object>> excelDataList2 = apiService.getData(begin_date, category2);
+            List<Map<String, Object>> excelDataList2 = apiService.getDataForB2C(begin_date, category2);
 
             excelDataList2.forEach(data -> logger.info("Excel Data: {}", data));
             logger.info("{}", excelDataList2.size());

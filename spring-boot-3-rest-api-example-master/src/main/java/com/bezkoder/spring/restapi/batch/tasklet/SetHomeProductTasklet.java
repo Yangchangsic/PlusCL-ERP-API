@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class CurLabelTasklet implements Tasklet {
+public class SetHomeProductTasklet implements Tasklet {
 
-    private static final Logger logger = LoggerFactory.getLogger(CurLabelTasklet.class);
+    private static final Logger logger = LoggerFactory.getLogger(SetHomeProductTasklet.class);
 
     @Autowired
     ApiService apiService;
@@ -42,10 +42,11 @@ public class CurLabelTasklet implements Tasklet {
         }
         logger.info(begin_date);
 
-        String category1 = "큐어라벨";
+        String category1 = "세트상품";
+        String category2 = "필름세트 3개입";
         try {
             logger.info(category1);
-            List<Map<String, Object>> excelDataList = apiService.getDataForB2C(begin_date, category1);
+            List<Map<String, Object>> excelDataList = apiService.getDataForSetHomeProduct(begin_date, category1, category2);
             excelDataList.forEach(data -> logger.info("Excel Data: {}", data));
             logger.info("{}", excelDataList.size());
 
@@ -62,7 +63,7 @@ public class CurLabelTasklet implements Tasklet {
 
             workbook.close();
         } catch (Exception e) {
-            logger.error("category1 : " + category1 + ", begin_date : " + begin_date, e);
+            logger.error("category1 : " + category1 + "category2 : " + category2 + ", begin_date : " + begin_date, e);
         }
         logger.info("=================================");
 
