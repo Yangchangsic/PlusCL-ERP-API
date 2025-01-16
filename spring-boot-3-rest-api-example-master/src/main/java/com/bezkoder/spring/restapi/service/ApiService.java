@@ -261,7 +261,6 @@ public class ApiService {
         AtomicInteger count = new AtomicInteger();
 
         while (true) {
-
             // 최상위 Map
             Map<String, Object> body = new HashMap<>();
 
@@ -334,22 +333,24 @@ public class ApiService {
 
                     String lotNo = (String) map.get("lot_no");
 
-                    // 날짜 형식 지정
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    //lotNo가 있을 때만
+                    if (lotNo != null && !lotNo.isEmpty()) {
+                        // 날짜 형식 지정
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-                    // lot_no를 LocalDate로 변환
-                    LocalDate lotDate = LocalDate.parse(lotNo, formatter);
-
-                    // SheifLift_Unit이 "M"인 경우
-                    if ("M".equalsIgnoreCase(sheifLiftUnit)) {
-                        lotDate = lotDate.plusMonths(sheifLift).minusDays(1);
-                        expireDay = lotDate.format(formatter);
-                    } else if ("D".equals(sheifLiftUnit)) {
-                        lotDate = lotDate.plusDays(sheifLift).minusDays(1);
-                        expireDay = lotDate.format(formatter);
-                    } else if ("Y".equalsIgnoreCase(sheifLiftUnit)) { // ++ 연도 추가
-                        lotDate = lotDate.plusYears(sheifLift).minusDays(1);
-                        expireDay = lotDate.format(formatter);
+                        // lot_no를 LocalDate로 변환
+                        LocalDate lotDate = LocalDate.parse(lotNo, formatter);
+                        // SheifLift_Unit이 "M"인 경우
+                        if ("M".equalsIgnoreCase(sheifLiftUnit)) {
+                            lotDate = lotDate.plusMonths(sheifLift).minusDays(1);
+                            expireDay = lotDate.format(formatter);
+                        } else if ("D".equals(sheifLiftUnit)) {
+                            lotDate = lotDate.plusDays(sheifLift).minusDays(1);
+                            expireDay = lotDate.format(formatter);
+                        } else if ("Y".equalsIgnoreCase(sheifLiftUnit)) { // ++ 연도 추가
+                            lotDate = lotDate.plusYears(sheifLift).minusDays(1);
+                            expireDay = lotDate.format(formatter);
+                        }
                     }
                 }
 
@@ -448,12 +449,18 @@ public class ApiService {
                             }
 
                             String expireDay = "*";
-                            if (!"*".equals(lotNo)) {
+                            if (!lotNo.isEmpty()) {
                                 // 날짜 형식 지정
                                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
                                 // lot_no를 LocalDate로 변환
-                                LocalDate lotDate = LocalDate.parse(lotNo, formatter);
+                                LocalDate lotDate;
+                                try {
+                                    lotDate = LocalDate.parse(lotNo, formatter);
+                                } catch (Exception e) {
+                                    logger.error("map : " + map + ", lotNo: " + lotNo, e);
+                                    throw e;
+                                }
 
                                 // SheifLift_Unit이 "M"인 경우
                                 if ("M".equalsIgnoreCase(sheifLiftUnit)) {
