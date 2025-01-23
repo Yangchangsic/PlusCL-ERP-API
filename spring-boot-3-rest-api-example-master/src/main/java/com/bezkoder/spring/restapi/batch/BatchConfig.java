@@ -23,6 +23,7 @@ public class BatchConfig {
     private final EstherFomularrTasklet estherFomularrTasklet;
     private final SetProductTasklet setProductTasklet;
     private final SetHomeProductTasklet setHomeProductTasklet;
+    private final QuSetHomeProductTasklet quSetHomeProductTasklet;
     private final TestTasklet testTasklet;
 
     public BatchConfig(JobBuilderFactory jobBuilderFactory,
@@ -31,6 +32,7 @@ public class BatchConfig {
                        EstherFomularrTasklet estherFomularrTasklet,
                        SetProductTasklet setProductTasklet,
                        SetHomeProductTasklet setHomeProductTasklet,
+                       QuSetHomeProductTasklet quSetHomeProductTasklet,
                        TestTasklet testTasklet
     ) {
         this.jobBuilderFactory = jobBuilderFactory;
@@ -39,6 +41,7 @@ public class BatchConfig {
         this.estherFomularrTasklet = estherFomularrTasklet;
         this.setProductTasklet = setProductTasklet;
         this.setHomeProductTasklet = setHomeProductTasklet;
+        this.quSetHomeProductTasklet = quSetHomeProductTasklet;
         this.testTasklet = testTasklet;
     }
 
@@ -107,6 +110,23 @@ public class BatchConfig {
         logger.info("setHomeProductStep");
         return stepBuilderFactory.get("setHomeProductStep")
                 .tasklet(setHomeProductTasklet)
+                .build();
+    }
+
+
+    @Bean
+    public Job quSetHomeProductJob(Step quSetHomeProductStep) {
+        logger.info("quSetHomeProductJob");
+        return jobBuilderFactory.get("quSetHomeProductJob")
+                .start(quSetHomeProductStep)
+                .build();
+    }
+
+    @Bean
+    public Step quSetHomeProductStep() {
+        logger.info("quSetHomeProductStep");
+        return stepBuilderFactory.get("quSetHomeProductStep")
+                .tasklet(quSetHomeProductTasklet)
                 .build();
     }
 

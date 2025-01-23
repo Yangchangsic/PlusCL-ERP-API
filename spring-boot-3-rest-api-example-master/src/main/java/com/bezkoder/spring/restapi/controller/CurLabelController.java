@@ -37,9 +37,9 @@ public class CurLabelController {
 
     @GetMapping("/cur-label")
     @ResponseBody
-    public String getDataForB2C(
-            String category1, String begin_date
-    ) {
+    public String getDataForB2C(String begin_date) {
+        String category1 = "큐어라벨";
+
         List<Map<String, Object>> excelDataList = apiService.getDataForB2C(begin_date, category1);
 
         excelDataList.forEach(data -> logger.info("Excel Data: {}", data));

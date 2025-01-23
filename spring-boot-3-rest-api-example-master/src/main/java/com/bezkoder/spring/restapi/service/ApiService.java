@@ -1,6 +1,7 @@
 package com.bezkoder.spring.restapi.service;
 
 import com.bezkoder.spring.restapi.model.ItemCode;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -30,8 +31,10 @@ public class ApiService {
     private static final Map<String, String> STATIC_DATA2 = new HashMap<>();
     private static final Map<String, String> STATIC_DATA3 = new HashMap<>();
     private static final Map<String, String> STATIC_DATA4 = new HashMap<>();
+    private static final Map<String, String> STATIC_DATA5 = new HashMap<>();
     private static final Map<String, Map<String, Object>> ITEM_CODE = new HashMap<>();
     private static final Map<String, List<ItemCode>> ITEM_CODE2 = new HashMap<>();
+    private static final Map<String, List<ItemCode>> ITEM_CODE3 = new HashMap<>();
 
     // static 블록을 사용하여 초기 데이터 삽입
     static {
@@ -83,6 +86,18 @@ public class ApiService {
         STATIC_DATA4.put("sk스토어", "03549");
         STATIC_DATA4.put("현대홈쇼핑", "00251");
         STATIC_DATA4.put("GS홈쇼핑", "02926");
+    }
+
+    static {
+        STATIC_DATA5.put("홈앤쇼핑", "6854684");
+        STATIC_DATA5.put("K쇼핑", "01552");
+        STATIC_DATA5.put("NS홈쇼핑", "00343");
+        STATIC_DATA5.put("CJ온스타일", "00250");
+        STATIC_DATA5.put("신세계티비쇼핑", "02603");
+        STATIC_DATA5.put("롯데", "00341");
+        STATIC_DATA5.put("sk스토어", "03549");
+        STATIC_DATA5.put("현대홈쇼핑", "00251");
+        STATIC_DATA5.put("GS홈쇼핑", "02926");
     }
 
     static {
@@ -255,6 +270,42 @@ public class ApiService {
     }
 
 
+    static {
+        ITEM_CODE3.put("1207RE+1212", List.of(
+                        new ItemCode(
+                                "PC_EF_1207",
+                                "리포좀 글루타치온 다이렉트 울트라X 리뉴얼",
+                                12,
+                                "20270818"
+                        ), new ItemCode(
+                                "PC_EF_1212",
+                                "루테인지아잔틴 다이렉트 RS2",
+                                1,
+                                "20260313"
+                        )
+                )
+        );
+        ITEM_CODE3.put("1207SE 13", List.of(
+                        new ItemCode(
+                                "PC_EF_1207",
+                                "리포좀 글루타치온 다이렉트 울트라X 리뉴얼 2",
+                                13,
+                                "20271110"
+                        )
+                )
+        );
+        ITEM_CODE3.put("124911 20", List.of(
+                        new ItemCode(
+                                "PC_EF_1211",
+                                "맥주효모 비오틴 울트라 5200",
+                                11,
+                                "20260918"
+                        )
+                )
+        );
+    }
+
+
     public List<Map<String, Object>> getDataForB2C(String begin_date, String category1) {
         List<Map<String, Object>> excelDataList = new ArrayList<>();
         int page = 1;
@@ -308,23 +359,31 @@ public class ApiService {
                 transformedMap.put("ord_name", map.get("ord_name"));
 
                 String ordName = (String) map.get("ord_name");
-                if (ordName == null || ordName.isEmpty() || "(주)에스더포뮬러".equals(ordName) || "에*사".equals(ordName)) {
-                    String ordSiteUserId = (String) map.get("ord_site_user_id");
-                    String chOrderName = STATIC_DATA4.get(ordSiteUserId);
-                    transformedMap.put("ch_order_name", chOrderName);
-                    count.getAndIncrement();
-                } else {
-                    if ("큐어라벨".equals(category1)) {
-                        transformedMap.put("ch_order_name", STATIC_DATA.get(ordName));
+                if ("에스더포뮬러".equals(category1)) {
+                    if (StringUtils.isEmpty(ordName) || "(주)에스더포뮬러".equals(ordName) || "에*사".equals(ordName)) {
+                        String ordSiteUserId = (String) map.get("ord_site_user_id");
+                        String chOrderName = STATIC_DATA4.get(ordSiteUserId);
+                        transformedMap.put("ch_order_name", chOrderName);
+                        count.getAndIncrement();
                     } else {
                         transformedMap.put("ch_order_name", STATIC_DATA2.get(ordName));
+                    }
+                } else {
+                    //큐어라벨
+                    if (StringUtils.isEmpty(ordName)) {
+                        String ordSiteUserId = (String) map.get("ord_site_user_id");
+                        String chOrderName = STATIC_DATA5.get(ordSiteUserId);
+                        transformedMap.put("ch_order_name", chOrderName);
+                        count.getAndIncrement();
+                    } else {
+                        transformedMap.put("ch_order_name", STATIC_DATA.get(ordName));
                     }
                 }
 
                 String expireDay = "*";
 
                 transformedMap.put("lot_no", map.get("lot_no"));
-                if (map.get("lot_no") == null || "".equals(map.get("lot_no"))) {
+                if (StringUtils.isEmpty((String) map.get("lot_no"))) {
                     transformedMap.put("lot_no", "-");
                     expireDay = "-";
                 } else {
@@ -421,14 +480,12 @@ public class ApiService {
                             transformedMap.put("ord_name", map.get("ord_name"));
 
                             String ordName = (String) map.get("ord_name");
-                            if (ordName == null) {
-                                transformedMap.put("ch_order_name", null);
+                            if (ordName == null || ordName.isEmpty() || "(주)에스더포뮬러".equals(ordName) || "에*사".equals(ordName)) {
+                                String ordSiteUserId = (String) map.get("ord_site_user_id");
+                                String chOrderName = STATIC_DATA4.get(ordSiteUserId);
+                                transformedMap.put("ch_order_name", chOrderName);
                             } else {
-                                if ("큐어라벨".equals(category1)) {
-                                    transformedMap.put("ch_order_name", STATIC_DATA.get(ordName));
-                                } else {
-                                    transformedMap.put("ch_order_name", STATIC_DATA2.get(ordName));
-                                }
+                                transformedMap.put("ch_order_name", STATIC_DATA2.get(ordName));
                             }
 
                             String itemCode = (String) map.get("item_code");
@@ -539,15 +596,24 @@ public class ApiService {
                         }).map(map -> {
                             int qty = (int) map.get("qty");
                             String itemCode = (String) map.get("item_code");    //1207RE+1212
-                            List<ItemCode> list = ITEM_CODE2.get(itemCode);
+                            String ordSiteUserId = (String) map.get("ord_site_user_id");
+
+                            List<ItemCode> list;
+                            String chOrderName;
+                            if ("QU멀티세트".equals(ordSiteUserId)) {
+                                list = ITEM_CODE3.get(itemCode);
+                                chOrderName = STATIC_DATA5.get(ordSiteUserId);
+                            } else {
+                                list = ITEM_CODE2.get(itemCode);
+                                chOrderName = STATIC_DATA4.get(ordSiteUserId);
+                            }
+
                             return list.stream()
                                     .map(itemCode2 -> {
                                         Map<String, Object> transformedMap = new HashMap<>();
                                         transformedMap.put("row_id", map.get("row_id"));
                                         transformedMap.put("ord_name", map.get("ord_name"));
                                         transformedMap.put("item_code", itemCode2.getSingleCode());
-                                        String ordSiteUserId = (String) map.get("ord_site_user_id");
-                                        String chOrderName = STATIC_DATA4.get(ordSiteUserId);
                                         transformedMap.put("ch_order_name", chOrderName);
                                         transformedMap.put("qty", qty * itemCode2.getQty());
                                         transformedMap.put("expireDay", itemCode2.getExpireDay());
